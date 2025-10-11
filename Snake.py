@@ -67,13 +67,11 @@ class Snake:
 		self.apple_y = random.randint(0, self.screen_border[1] / self.game_size - 4) * self.game_size + self.game_size
 
 	def render_thinks(self):
-		self.screen.fill((72,144,50))
 		self.movement()
 		self.render_score()
 		pygame.draw.rect(self.screen, (255,0,0), [self.apple_x, self.apple_y, self.game_size, self.game_size])
-		pygame.display.flip()
 
 	def render_score(self):
 		text = self.font.render("Score: " + str(self.score), True, (255,0,0))
-		text_position = text.get_rect().center = (pygame.display.get_window_size()[0] - (pygame.surface.Surface.get_size(text)[0] + 17), pygame.surface.Surface.get_size(text)[1])
+		text_position = (pygame.display.get_window_size()[0] - (pygame.surface.Surface.get_size(text)[0] + 17), pygame.surface.Surface.get_size(text)[1])
 		self.screen.blit(text, text_position)
