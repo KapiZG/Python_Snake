@@ -16,29 +16,26 @@ class Snake_widget_manager:
 
     def main_menu(self):
         self.current_screen.fill((255,100,100))
-
         self.current_screen.blit(self.default_font.render("Snake game", True, (0,0,0)),(400, 100))
 
         start_buton = Button_default.Button_default(self.current_screen, (400, 200), "Start game")
-        start_buton.render_button()
-
         setting_button = Button_default.Button_default(self.current_screen, (400, 300), "Settings")
-        setting_button.render_button()
-
         exit_button = Button_default.Button_default(self.current_screen, (400, 400), "Exit game")
-        exit_button.render_button()
 
-        pygame.display.flip()
         is_running = True
         while is_running:
+            start_buton.render_button()
+            setting_button.render_button()
+            exit_button.render_button()
             self.clock.tick(60)
             if pygame.event.poll().type == pygame.MOUSEBUTTONUP:
-                if start_buton.is_click():
+                if start_buton.is_mouse_on_button():
                     self.run_snake()
-                elif setting_button.is_click():
-                    pass
-                elif exit_button.is_click():
+                elif setting_button.is_mouse_on_button():
+                    self.settings()
+                elif exit_button.is_mouse_on_button():
                     self.exit_game()
+            pygame.display.flip()
     
     def run_snake(self):
         snake = Snake.Snake(self.game_size, self.current_screen)
@@ -66,28 +63,44 @@ class Snake_widget_manager:
 
         self.death_screen(snake.score)
 
+    def settings(self):
+        self.current_screen.fill((255,0,0))
+        go_back_button = Button_default.Button_default(self.current_screen, (400, 500), "Back")
+        is_running = True
+        while is_running:
+            self.clock.tick(60)
+            go_back_button.render_button()
+            if pygame.event.poll().type == pygame.MOUSEBUTTONUP:
+                if go_back_button.is_mouse_on_button():
+                    self.main_menu()
+            pygame.display.flip()
+
     def death_screen(self, score):
         pygame.event.clear()
         is_running = True
 
         self.current_screen.fill((255,100,100))
-
         self.current_screen.blit(self.default_font.render("Your Score: " + str(score), True, (0,0,0)), (400, 100))
 
-        retry_button = Button_default.Button_default(self.current_screen, (400,200), text="retry")
-        retry_button.render_button()
+        retry_button = Button_default.Button_default(self.current_screen, (400,200), text="Retry")
+        menu_button = Button_default.Button_default(self.current_screen, (400,300), text="Main menu")
+        exit_button = Button_default.Button_default(self.current_screen, (400,400), text="Exit")
 
-        exit_button = Button_default.Button_default(self.current_screen, (400,300), text="exit")
-        exit_button.render_button()
-        pygame.display.flip()
         while is_running:
+            retry_button.render_button()
+            menu_button.render_button()
+            exit_button.render_button()
+
             self.clock.tick(60)
             events = pygame.event.poll()
             if events.type == pygame.MOUSEBUTTONUP:
-                if retry_button.is_click():
+                if retry_button.is_mouse_on_button():
                     self.run_snake()
-                elif exit_button.is_click():
+                elif exit_button.is_mouse_on_button():
                     is_running = False
+                elif menu_button.is_mouse_on_button():
+                    self.main_menu()
+            pygame.display.flip()
         self.exit_game()
 
     def exit_game(self):  
