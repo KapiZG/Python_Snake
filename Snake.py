@@ -11,6 +11,8 @@ class Snake:
 		self.score = 0
 		self.button_pressed = ""
 		self.font = pygame.font.Font(pygame.font.get_default_font(), 20)
+		self.bombs = []
+		self.apple_x, self.apple_y = (0,0)
 		self.spawn_apple()
 		self.render_thinks()
 		
@@ -46,6 +48,11 @@ class Snake:
 		for i in range(len(self.body) - 1):
 			if (self.body[0] == self.body[len(self.body) - 1 - i]).all():
 				return True
+		for bomb in self.bombs:
+			if self.body[0][0] == bomb[0] and self.body[0][1] == bomb[1]:
+				return True
+		return False
+		
 		
 	def get_snake_x_and_y(self):
 		return (self.body[0][0], self.body[0][1])
@@ -61,15 +68,41 @@ class Snake:
 			self.body[len(self.body) - 2][0] -= self.game_size
 		elif self.button_pressed == "w":
 			self.body[len(self.body) - 2][1] -= self.game_size
-		
+
 	def spawn_apple(self):
-		self.apple_x = random.randint(0, self.screen_border[0] / self.game_size - 4) * self.game_size + self.game_size
-		self.apple_y = random.randint(0, self.screen_border[1] / self.game_size - 4) * self.game_size + self.game_size
+		self.apple_x, self.apple_y = self.get_random_position_without_overlaping()
+
+	def spawn_bomb(self):
+		if len(self.bombs) < int(self.score/5):
+			self.bombs.append(self.get_random_position_without_overlaping())
+	
+	def get_random_position_without_overlaping(self):
+		is_not_unique = True
+		while is_not_unique:
+			is_not_unique = False
+			coordinates = self.get_random_position()
+			for element in self.body:
+				if (element[0], element[1]) == coordinates:
+					is_not_unique = True
+			for element in self.bombs:
+				if element == coordinates:
+					is_not_unique = True
+			if (self.apple_x, self.apple_y) == coordinates:
+				is_not_unique = True
+		return coordinates
+
+
+	def get_random_position(self):
+		x = random.randint(0, self.screen_border[0] / self.game_size - 4) * self.game_size + self.game_size
+		y = random.randint(0, self.screen_border[1] / self.game_size - 4) * self.game_size + self.game_size
+		return x, y
 
 	def render_thinks(self):
 		self.movement()
 		self.render_score()
 		pygame.draw.rect(self.screen, (255,0,0), [self.apple_x, self.apple_y, self.game_size, self.game_size])
+		for bomb in self.bombs:
+			pygame.draw.rect(self.screen, (0,0,0), [bomb[0], bomb[1], self.game_size, self.game_size])
 
 	def render_score(self):
 		text = self.font.render("Score: " + str(self.score), True, (255,0,0))
