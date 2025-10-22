@@ -3,7 +3,7 @@ import pygame
 class Button_default:
     DEFAULT_BUTTON_WIDTH = 200
     DEFAULT_BUTTON_HEIGHT = 40
-    def __init__(self, screen, button_position: tuple[int, int], text = "", font_size = 20, text_color = (0,0,0), button_color = (255, 255, 255), button_width = DEFAULT_BUTTON_WIDTH, button_height = DEFAULT_BUTTON_HEIGHT):
+    def __init__(self, screen, button_position, text = "", font_size = 20, text_color = (0,0,0), button_color = (255, 255, 255), button_width = DEFAULT_BUTTON_WIDTH, button_height = DEFAULT_BUTTON_HEIGHT):
         self.screen = screen
         self.text_color = text_color
         self.button_position = button_position
@@ -35,4 +35,6 @@ class Button_default:
             return True
         else:
             return False
-        
+    
+    def get_Text(self):
+        return self.text.lower()

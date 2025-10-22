@@ -66,3 +66,4 @@ class Snake:
 		text = pygame.font.Font(pygame.font.get_default_font(), 20).render("Score: " + str(self.score), True, (255,0,0))
 		text_position = (pygame.display.get_window_size()[0] - (pygame.surface.Surface.get_size(text)[0] + 17), pygame.surface.Surface.get_size(text)[1])
 		self.screen.blit(text, text_position)
+		
