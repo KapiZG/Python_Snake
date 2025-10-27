@@ -1,12 +1,14 @@
 import pygame 
 import numpy
+import random
+from Snake_data import Game_data as Data
 
 class Snake:
 	def __init__(self, game_size, screen):
 		self.screen = screen
 		self.screen_border = screen.get_size()
 		self.game_size = game_size
-		self.body = numpy.array([[self.game_size,self.game_size,self.game_size,self.game_size]])
+		self.body = numpy.array([[self.game_size, self.game_size, self.game_size, self.game_size]])
 		self.score = 0
 		self.button_pressed = ""
 		self.is_snake_death = False
@@ -66,4 +68,39 @@ class Snake:
 		text = pygame.font.Font(pygame.font.get_default_font(), 20).render("Score: " + str(self.score), True, (255,0,0))
 		text_position = (pygame.display.get_window_size()[0] - (pygame.surface.Surface.get_size(text)[0] + 17), pygame.surface.Surface.get_size(text)[1])
 		self.screen.blit(text, text_position)
-		
+
+
+class Snake_enemy(Snake):
+    def __init__(self, game_size, screen, snake_size, start_position):
+            super().__init__(game_size, screen)
+            self.button_pressed = "a"
+            self.body[0][0], self.body[0][1] = (start_position[0] * self.game_size, start_position[1] * self.game_size)
+            for _ in range(snake_size):
+                self.grow_the_snake()
+            
+    def change_direction(self):
+        while True:
+            i = random.randint(0, 3)
+            if i == 0 and 0 != self.body[0][0]:
+                if self.chekc_if_im_going_to_touch_myself((self.body[0][0] - self.game_size, self.body[0][1])):
+                    self.button_pressed = "a"
+                    break
+            elif i == 1 and self.screen_border[0] - self.game_size != self.body[0][0]:
+                if self.chekc_if_im_going_to_touch_myself((self.body[0][0] + self.game_size, self.body[0][1])):
+                    self.button_pressed = "d"
+                    break
+            elif i == 2 and self.screen_border[1] - self.game_size != self.body[0][1]:
+                if self.chekc_if_im_going_to_touch_myself((self.body[0][0], self.body[0][1]  + self.game_size)):
+                    self.button_pressed = "s"
+                    break
+            elif i == 3 and 0 != self.body[0][1]:
+                if self.chekc_if_im_going_to_touch_myself((self.body[0][0], self.body[0][1]  - self.game_size)):
+                    self.button_pressed = "w"
+                    break
+    
+    def chekc_if_im_going_to_touch_myself(self, next_position):
+        for body_part in self.body:
+            if (body_part[0], body_part[1]) == next_position:
+                return False 
+        return True
+

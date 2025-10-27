@@ -1,31 +1,30 @@
 import Snake
 import pygame
 from Button_default import Button_default
+from Button_default import Input_text
 import sys
 from Snake_database_handler import Snake_database_handler
 import Base_game_modes
+from Snake_data import Game_data as Data
 
 class Snake_widget_manager:
 	def __init__(self):
-		pygame.init()
-		pygame.display.set_caption("Snake")
-		self.clock = pygame.time.Clock()
-
 		self.database = Snake_database_handler()
 
-		self.game_size = 40
-		self.background_color = (72,144,50)
-		self.current_screen = pygame.display.set_mode((self.game_size * 25, self.game_size * 15))
-		self.default_font = pygame.font.Font(pygame.font.get_default_font(), self.game_size)
+		self.game_size = Data.grid_cell_size
+		self.current_screen = Data().create_window()
+		self.clock = pygame.time.Clock()
 		self.main_menu()
 
 	def main_menu(self):
 		self.current_screen.fill((255,100,100))
-		self.current_screen.blit(self.default_font.render("Snake game", True, (0,0,0)),(400, 100))
 
-		start_buton = Button_default(self.current_screen, (400, 200), "Start game")
-		setting_button = Button_default(self.current_screen, (400, 300), "Settings")
-		exit_button = Button_default(self.current_screen, (400, 400), "Exit game")
+		text_snake_game = Data.generate_text("Snake game", color=(0,0,0))
+		self.current_screen.blit(text_snake_game, (Button_default.center_div(text_snake_game.get_width()), Data.main_menu_top_margin))
+
+		start_buton = Button_default(self.current_screen, (Button_default.center_div(), text_snake_game.get_abs_offset()[1] + text_snake_game.get_height() + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Start game")
+		setting_button = Button_default(self.current_screen, (Button_default.center_div(), start_buton.button_position[1] + Data.minimum_top_margin), "Settings")
+		exit_button = Button_default(self.current_screen, (Button_default.center_div(), setting_button.button_position[1] + Data.minimum_top_margin), "Exit game")
 
 		is_running = True
 		while is_running:
@@ -43,24 +42,32 @@ class Snake_widget_manager:
 			pygame.display.flip()
 
 	def select_game(self):
-		self.current_screen.fill((62, 110, 56))
+		self.current_screen.fill(Data.select_background_color)
 
-		self.current_screen.blit(self.default_font.render("Select a Game Mode", True, (255,255,255)), (300, 100))
+		text_select_game_mode = Data.generate_text("Select a Game Mode")
+		
+		self.current_screen.blit(text_select_game_mode, (Button_default.center_div(text_select_game_mode.get_width()), Data.select_top_margin))
 
+		adventure_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1),  text_select_game_mode.get_abs_offset()[1] + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Adventure Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		bare_bone_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), adventure_mode.button_position[1] + Data.minimum_top_margin), "Bare Bone Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		bomb_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bare_bone_mode.button_position[1] + Data.minimum_top_margin), "Bomb Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		vs_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bomb_mode.button_position[1] + Data.minimum_top_margin), "vs Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 
-		adventure_mode = Button_default(self.current_screen, (200, 200), "Adventure Mode")
-		bare_bone_mode = Button_default(self.current_screen, (200, 300), "Bare Bone Mode")
-		bomb_mode = Button_default(self.current_screen, (200, 400), "Bomb Mode")
+		black_out_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5),  text_select_game_mode.get_abs_offset()[1] + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Black Out Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		button_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), adventure_mode.button_position[1] + Data.minimum_top_margin), "Buttons Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		not_definded = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), bare_bone_mode.button_position[1] + Data.minimum_top_margin), "None", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		multiplayer_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), bomb_mode.button_position[1] + Data.minimum_top_margin), "Multiplayer", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 
-		buttons = [adventure_mode, bare_bone_mode, bomb_mode]
+		buttons = [adventure_mode, bare_bone_mode, bomb_mode, vs_mode, black_out_mode, button_mode, not_definded, multiplayer_mode]
 		for button in buttons:
 			if self.database.is_score_exist(button.get_Text()):
 				score_value = str(self.database.get_best_game_score(button.get_Text()))
 			else:
 				score_value = "-"
-			self.current_screen.blit(self.default_font.render("Best Score: " + score_value, True, (255,255,255)), (500, button.button_position[1]))
+			score_text = Data.generate_text(str("Best Score: " + score_value), font_size=int(Data.text_size * 0.75))
+			self.current_screen.blit(score_text, (button.button_position[0] + button.button_width + Data.select_score_left_margin, button.button_position[1]))
 		
-		return_button = Button_default(self.current_screen, (400, 500), "Return")
+		return_button = Button_default(self.current_screen, (Button_default.center_div(), vs_mode.button_position[1] + Data.minimum_top_margin), "Return")
 		buttons.append(return_button)
 
 		pygame.display.flip()
@@ -79,39 +86,55 @@ class Snake_widget_manager:
 					self.run_snake(Base_game_modes.Bomb_mode_game(self.current_screen, self.game_size))
 				elif return_button.is_mouse_on_button():
 					self.main_menu()
+				elif vs_mode.is_mouse_on_button():
+					self.run_snake(Base_game_modes.Versus_ai_mode(self.current_screen, self.game_size))
 			pygame.display.flip()
 
 	def run_snake(self, game):
 		snake = Snake.Snake(self.game_size, self.current_screen)
 
 		game.init_snake_in_game(snake)
-		game.start_game(self.background_color)
+		game.start_game(Data.gameplay_background_color)
 
-		self.death_screen(snake.score, game.get_game_mode_name())
+		self.death_screen(snake.score, game)
 
 	def settings(self):
 		self.current_screen.fill((255,0,0))
 		go_back_button = Button_default(self.current_screen, (400, 500), "Back")
+
+		input_text = Input_text(self.current_screen, (200, 200))
+		accept_button = Button_default(self.current_screen, (600, 200), "Accept tekst")
+		text = Data.generate_text("")
+
 		is_running = True
 		while is_running:
 			self.clock.tick(60)
 			go_back_button.render_button()
-			if pygame.event.poll().type == pygame.MOUSEBUTTONUP:
+			accept_button.render_button()
+			input_text.render_button()
+			user_input = pygame.event.poll()
+			if user_input.type == pygame.MOUSEBUTTONUP:
+				input_text.on_click()
 				if go_back_button.is_mouse_on_button():
 					self.main_menu()
+				elif accept_button.is_mouse_on_button():
+					text = Data.generate_text(input_text.text)
+					
+			self.current_screen.blit(text, (1200, 200))
+			input_text.get_user_input(user_input)
 			pygame.display.flip()
 
-	def death_screen(self, score, mode_name):
+	def death_screen(self, score, game_mode):
 		pygame.event.clear()
 		is_running = True
 
-		self.database.insert_game_score(mode_name, score)
+		self.database.insert_game_score(game_mode.get_game_mode_name(), score)
 
 		self.current_screen.fill((255,100,100))
-		self.current_screen.blit(self.default_font.render("You Died!!!", True, (0,0,0)), (400, 50))
-		self.current_screen.blit(self.default_font.render("Your Score: " + str(score), True, (0,0,0)), (400, 100))
+		self.current_screen.blit(Data.generate_text("You Died!!!", color=(0,0,0)), (400, 50))
+		self.current_screen.blit(Data.generate_text("Your Score: " + str(score), color=(0,0,0)), (400, 100))
 
-		self.current_screen.blit(self.default_font.render("Your best score: " + str(self.database.get_best_game_score(mode_name)), True, (0,0,0)), (400, 150))
+		self.current_screen.blit(Data.generate_text("Your best score: " + str(self.database.get_best_game_score(game_mode.get_game_mode_name())), color=(0,0,0)), (400, 150))
 
 		retry_button = Button_default(self.current_screen, (400,250), text="Retry")
 		menu_button = Button_default(self.current_screen, (400,350), text="Main menu")
@@ -126,7 +149,7 @@ class Snake_widget_manager:
 			events = pygame.event.poll()
 			if events.type == pygame.MOUSEBUTTONUP:
 				if retry_button.is_mouse_on_button():
-					self.run_snake()
+					self.run_snake(game_mode)
 				elif exit_button.is_mouse_on_button():
 					is_running = False
 				elif menu_button.is_mouse_on_button():

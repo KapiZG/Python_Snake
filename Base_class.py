@@ -44,6 +44,7 @@ class Base_game:
 			element.render(self.screen)
 
 	def start_game(self, custom_game_mechanic, background_color):
+		self.active_objects = []
 		self.add_object_to_game(Apple(self.get_free_position(), self.game_size))
 		while not self.player.is_snake_death:
 			self.screen.fill(background_color)
@@ -119,4 +120,3 @@ class Apple(Object_snake):
 		player.score += 1
 		player.grow_the_snake()
 		self.set_new_position(new_position)
-
