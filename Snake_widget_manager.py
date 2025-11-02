@@ -92,7 +92,7 @@ class Snake_widget_manager:
 
 	def run_snake(self, game):
 		snake = Snake.Snake(self.game_size, self.current_screen)
-
+		game = game.clone()
 		game.init_snake_in_game(snake)
 		game.start_game(Data.gameplay_background_color)
 
@@ -105,6 +105,9 @@ class Snake_widget_manager:
 		input_text = Input_text(self.current_screen, (200, 200))
 		accept_button = Button_default(self.current_screen, (600, 200), "Accept tekst")
 		text = Data.generate_text("")
+		resolution1 = Button_default(self.current_screen, (100, 800), "1600x900")
+		resolution2 = Button_default(self.current_screen, (600, 800), "1920x1080")
+		resolution3 = Button_default(self.current_screen, (1000, 800), "2560x1440")
 
 		is_running = True
 		while is_running:
@@ -112,6 +115,9 @@ class Snake_widget_manager:
 			go_back_button.render_button()
 			accept_button.render_button()
 			input_text.render_button()
+			resolution1.render_button()
+			resolution2.render_button()
+			resolution3.render_button()
 			user_input = pygame.event.poll()
 			if user_input.type == pygame.MOUSEBUTTONUP:
 				input_text.on_click()
@@ -119,6 +125,12 @@ class Snake_widget_manager:
 					self.main_menu()
 				elif accept_button.is_mouse_on_button():
 					text = Data.generate_text(input_text.text)
+				elif resolution1.is_mouse_on_button():
+					self.database.change_settings("resolution", "1600x900")
+				elif resolution2.is_mouse_on_button():
+					self.database.change_settings("resolution", "1920x1080")
+				elif resolution3.is_mouse_on_button():
+					self.database.change_settings("resolution", "2560x1440")
 					
 			self.current_screen.blit(text, (1200, 200))
 			input_text.get_user_input(user_input)
@@ -131,14 +143,19 @@ class Snake_widget_manager:
 		self.database.insert_game_score(game_mode.get_game_mode_name(), score)
 
 		self.current_screen.fill((255,100,100))
-		self.current_screen.blit(Data.generate_text("You Died!!!", color=(0,0,0)), (400, 50))
-		self.current_screen.blit(Data.generate_text("Your Score: " + str(score), color=(0,0,0)), (400, 100))
 
-		self.current_screen.blit(Data.generate_text("Your best score: " + str(self.database.get_best_game_score(game_mode.get_game_mode_name())), color=(0,0,0)), (400, 150))
+		death_text = Data.generate_text("You Died!!!", color=(0,0,0))
+		self.current_screen.blit(death_text, (Button_default.center_div(death_text.get_width()), Data.death_top_margin))
 
-		retry_button = Button_default(self.current_screen, (400,250), text="Retry")
-		menu_button = Button_default(self.current_screen, (400,350), text="Main menu")
-		exit_button = Button_default(self.current_screen, (400,450), text="Exit")
+		current_score_text = Data.generate_text("Your Score: " + str(score), color=(0,0,0))
+		self.current_screen.blit(current_score_text, (Button_default.center_div(current_score_text.get_width()), death_text.get_abs_offset()[1] + Data.minimum_top_margin))
+
+		best_score_text = Data.generate_text("Your best score: " + str(self.database.get_best_game_score(game_mode.get_game_mode_name())), color=(0,0,0))
+		self.current_screen.blit(best_score_text, (Button_default.center_div(best_score_text.get_width()), current_score_text.get_abs_offset()[1] + Data.minimum_top_margin + current_score_text.get_height()))
+
+		retry_button = Button_default(self.current_screen, (Button_default.center_div(), best_score_text.get_abs_offset()[1] + Data.minimum_top_margin + best_score_text.get_height() + int(0.1 * Data.window_resolution[1])), text="Retry")
+		menu_button = Button_default(self.current_screen, (Button_default.center_div(), retry_button.button_position[1] + Data.minimum_top_margin), text="Main menu")
+		exit_button = Button_default(self.current_screen, (Button_default.center_div(), menu_button.button_position[1] + Data.minimum_top_margin), text="Exit")
 
 		while is_running:
 			retry_button.render_button()

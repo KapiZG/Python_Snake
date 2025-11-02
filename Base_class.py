@@ -1,5 +1,6 @@
 import pygame
 from random import randint
+from Snake_data import Game_data as Data
 
 class Base_game:
 	def __init__(self, screen, game_size):
@@ -8,6 +9,7 @@ class Base_game:
 		self.game_size = game_size
 		self.active_objects = []
 		self.player = None
+		self.grid_offset = Data.grid_offset
 		# Needs to be definded in subclasses 
 		self.game_mode_name = None
 
@@ -31,8 +33,8 @@ class Base_game:
 		return True
 
 	def get_random_position(self):
-		x = randint(0, int(self.screen_border[0] / self.game_size - 4)) * self.game_size + self.game_size
-		y = randint(0, int(self.screen_border[1] / self.game_size - 4)) * self.game_size + self.game_size
+		x = randint(0, int(self.screen_border[0] / self.game_size - 4)) * self.game_size + self.game_size + self.grid_offset[0]
+		y = randint(0, int(self.screen_border[1] / self.game_size - 4)) * self.game_size + self.game_size + self.grid_offset[1]
 		return x, y
 
 	def check_if_colision_happen(self, player):
@@ -40,8 +42,17 @@ class Base_game:
 			element.if_touched_by_player(player, self.get_free_position())
 
 	def render_things(self):
+		pygame.draw.rect(self.screen, (0,0,0), [0, 0, Data.window_resolution[0], self.grid_offset[1]])
+		pygame.draw.rect(self.screen, (0,0,0), [0, 0, self.grid_offset[0], Data.window_resolution[1]])
+		pygame.draw.rect(self.screen, (0,0,0), [0, Data.window_resolution[1] - self.grid_offset[1], Data.window_resolution[0], Data.window_resolution[1]])
+		pygame.draw.rect(self.screen, (0,0,0), [Data.window_resolution[0] - self.grid_offset[0], 0, Data.window_resolution[0], Data.window_resolution[1]])
+		# print(border)
 		for element in self.active_objects:
 			element.render(self.screen)
+		if Data.show_grid:
+			for y in range(Data.grid_size):
+				for x in range(Data.grid_size):
+					pygame.draw.rect(self.screen, (0,0,0), [x * Data.grid_cell_size + self.grid_offset[0], y * Data.grid_cell_size +self.grid_offset[1], Data.grid_cell_size, Data.grid_cell_size], 2)
 
 	def start_game(self, custom_game_mechanic, background_color):
 		self.active_objects = []
@@ -75,6 +86,9 @@ class Base_game:
 
 	def get_game_mode_name(self):
 		return self.game_mode_name
+	
+	def clone(self):
+		return self.__init__(self.screen, self.game_size)
 
 class Object_snake:
 	def __init__(self, position, game_size, color = (255,255,255)):

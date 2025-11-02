@@ -8,6 +8,9 @@ class Bare_bone_mode_game(Base_class.Base_game):
 
     def start_game(self, background_color):
         super().start_game(lambda: None, background_color)
+    
+    def clone(self):
+        return Bare_bone_mode_game(self.screen, self.game_size)
 
 class Bomb_mode_game(Base_class.Base_game):
     
@@ -26,6 +29,9 @@ class Bomb_mode_game(Base_class.Base_game):
         if self.score_required_to_spawn_bomb == self.player.score:
             self.active_objects.append(Base_class.Bomb(self.get_free_position(), self.game_size))
             self.score_required_to_spawn_bomb += score_between_bombs
+        
+    def clone(self):
+        return Bomb_mode_game(self.screen, self.game_size)
 
 class Versus_ai_mode(Base_class.Base_game):
     def __init__(self, screen, game_size):
@@ -42,5 +48,8 @@ class Versus_ai_mode(Base_class.Base_game):
                 self.player.is_snake_death = True
         self.enemy_snake.change_direction()
         self.enemy_snake.render()
+        
+    def clone(self):
+        return Versus_ai_mode(self.screen, self.game_size)
         
         

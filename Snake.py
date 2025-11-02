@@ -8,7 +8,7 @@ class Snake:
 		self.screen = screen
 		self.screen_border = screen.get_size()
 		self.game_size = game_size
-		self.body = numpy.array([[self.game_size, self.game_size, self.game_size, self.game_size]])
+		self.body = numpy.array([[self.game_size + Data.grid_offset[0], self.game_size + Data.grid_offset[1], self.game_size, self.game_size]])
 		self.score = 0
 		self.button_pressed = ""
 		self.is_snake_death = False
@@ -43,7 +43,7 @@ class Snake:
 		for i in range(len(self.body) - 1):
 			if (self.body[0] == self.body[len(self.body) - 1 - i]).all():
 				self.is_snake_death = True
-		if self.body[0][0] >= self.screen_border[0] or self.body[0][1] >= self.screen_border[1] or self.body[0][0] < 0 or self.body[0][1] < 0:
+		if self.body[0][0] >= self.screen_border[0] - Data.grid_offset[0] or self.body[0][1] >= self.screen_border[1] - Data.grid_offset[1] or self.body[0][0] < Data.grid_offset[0] or self.body[0][1] < Data.grid_offset[1]:
 			self.is_snake_death = True
 	
 	def get_snake_x_and_y(self):

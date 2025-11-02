@@ -1,14 +1,14 @@
 import pygame
+from Snake_database_handler import Snake_database_handler
 
 class Game_data:
 
-    # store how many cells are on x axis
+    window_resolution = [int(x) for x in Snake_database_handler().get_settings("resolution").split("x")]
+
+    #gameplay grid data
     grid_size = 25
-
-    window_resolution = (1600, 900)
-
-    #size of one cell
     grid_cell_size = int(window_resolution[0] / grid_size)
+    grid_offset = (int((window_resolution[0] % grid_cell_size)/2), int((window_resolution[1] % grid_cell_size)/2))
 
     minimum_top_margin = int(0.15 * window_resolution[1])
     text_size = int(0.075 * window_resolution[1])
@@ -24,6 +24,12 @@ class Game_data:
 
     # gameplay data
     gameplay_background_color = (72,144,50)
+
+    # death screen data
+    death_top_margin = int(0.05 * window_resolution[1])
+
+    # Setings data
+    show_grid = False
 
     def __init__(self):
         pass
