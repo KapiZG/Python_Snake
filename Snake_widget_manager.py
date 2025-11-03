@@ -51,7 +51,7 @@ class Snake_widget_manager:
 		adventure_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1),  text_select_game_mode.get_abs_offset()[1] + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Adventure Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 		bare_bone_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), adventure_mode.button_position[1] + Data.minimum_top_margin), "Bare Bone Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 		bomb_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bare_bone_mode.button_position[1] + Data.minimum_top_margin), "Bomb Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
-		vs_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bomb_mode.button_position[1] + Data.minimum_top_margin), "vs Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		vs_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bomb_mode.button_position[1] + Data.minimum_top_margin), "Versus Ai Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 
 		black_out_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5),  text_select_game_mode.get_abs_offset()[1] + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Black Out Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 		button_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), adventure_mode.button_position[1] + Data.minimum_top_margin), "Buttons Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
@@ -88,6 +88,8 @@ class Snake_widget_manager:
 					self.main_menu()
 				elif vs_mode.is_mouse_on_button():
 					self.run_snake(Base_game_modes.Versus_ai_mode(self.current_screen, self.game_size))
+				elif black_out_mode.is_mouse_on_button():
+					self.run_snake(Base_game_modes.Black_out_mode(self.current_screen, self.game_size))
 			pygame.display.flip()
 
 	def run_snake(self, game):
@@ -108,11 +110,13 @@ class Snake_widget_manager:
 		resolution1 = Button_default(self.current_screen, (100, 800), "1600x900")
 		resolution2 = Button_default(self.current_screen, (600, 800), "1920x1080")
 		resolution3 = Button_default(self.current_screen, (1000, 800), "2560x1440")
+		gridButton = Button_default(self.current_screen, (300, 650), "grid")
 
 		is_running = True
 		while is_running:
 			self.clock.tick(60)
 			go_back_button.render_button()
+			gridButton.render_button()
 			accept_button.render_button()
 			input_text.render_button()
 			resolution1.render_button()
@@ -131,6 +135,9 @@ class Snake_widget_manager:
 					self.database.change_settings("resolution", "1920x1080")
 				elif resolution3.is_mouse_on_button():
 					self.database.change_settings("resolution", "2560x1440")
+				elif gridButton.is_mouse_on_button():
+					Data.show_grid = not Data.show_grid
+					self.database.change_settings("grid", Data.show_grid)
 					
 			self.current_screen.blit(text, (1200, 200))
 			input_text.get_user_input(user_input)

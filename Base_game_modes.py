@@ -1,5 +1,7 @@
 import Base_class
 import Snake
+import pygame
+from Snake_data import Game_data as Data
 
 class Bare_bone_mode_game(Base_class.Base_game):
     def __init__(self, screen, game_size):
@@ -52,4 +54,27 @@ class Versus_ai_mode(Base_class.Base_game):
     def clone(self):
         return Versus_ai_mode(self.screen, self.game_size)
         
+class Black_out_mode(Base_class.Base_game):
+    def __init__(self, screen, game_size):
+        super().__init__(screen, game_size)
+        self.game_mode_name = "black out mode"
+        self.timer_apple = 0
         
+    def start_game(self, background_color):
+        super().start_game(self.middle_game, background_color)
+
+    def middle_game(self):
+        player_head_position = self.player.get_snake_x_and_y()
+        pygame.draw.rect(self.screen, (0,0,0), [0,0, Data.window_resolution[0], player_head_position[1] - 2 * self.game_size])
+        pygame.draw.rect(self.screen, (0,0,0), [0, player_head_position[1] + 3 * self.game_size, Data.window_resolution[0] , Data.window_resolution[1]])
+        pygame.draw.rect(self.screen, (0,0,0), [0,0, player_head_position[0] - 2 * self.game_size, Data.window_resolution[1]])
+        pygame.draw.rect(self.screen, (0,0,0), [player_head_position[0] + 3 * self.game_size, 0, Data.window_resolution[0] , Data.window_resolution[1]])
+        self.player.render_score()
+        if self.timer_apple <= 5:
+            self.apple.render(self.screen)
+            self.timer_apple += 1
+        if self.apple.is_overlaping(self.player.get_snake_x_and_y()):
+            self.timer_apple = 0
+
+    def clone(self):
+        return Black_out_mode(self.screen, self.game_size)

@@ -10,6 +10,7 @@ class Base_game:
 		self.active_objects = []
 		self.player = None
 		self.grid_offset = Data.grid_offset
+		self.apple = None
 		# Needs to be definded in subclasses 
 		self.game_mode_name = None
 
@@ -56,7 +57,8 @@ class Base_game:
 
 	def start_game(self, custom_game_mechanic, background_color):
 		self.active_objects = []
-		self.add_object_to_game(Apple(self.get_free_position(), self.game_size))
+		self.apple = Apple(self.get_free_position(), self.game_size)
+		self.add_object_to_game(self.apple)
 		while not self.player.is_snake_death:
 			self.screen.fill(background_color)
 			for event in pygame.event.get():
@@ -68,13 +70,12 @@ class Base_game:
 
 			self.check_if_colision_happen(self.player)
 			self.render_things()
-			custom_game_mechanic()
-
 			self.player.render_thinks()
+			custom_game_mechanic()
 			self.player.did_i_touch_myself_or_border()
 
-			pygame.time.Clock().tick(60)
 
+			pygame.time.Clock().tick(60)
 			pygame.display.flip()
 		return 1
 
@@ -88,7 +89,7 @@ class Base_game:
 		return self.game_mode_name
 	
 	def clone(self):
-		return self.__init__(self.screen, self.game_size)
+		return Base_game(self.screen, self.game_size)
 
 class Object_snake:
 	def __init__(self, position, game_size, color = (255,255,255)):

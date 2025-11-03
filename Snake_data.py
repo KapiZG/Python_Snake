@@ -29,7 +29,7 @@ class Game_data:
     death_top_margin = int(0.05 * window_resolution[1])
 
     # Setings data
-    show_grid = False
+    show_grid = bool(Snake_database_handler().get_settings("grid"))
 
     def __init__(self):
         pass

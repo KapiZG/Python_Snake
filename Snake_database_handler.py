@@ -11,6 +11,7 @@ class Snake_database_handler:
 			self.db_cursor.execute("CREATE TABLE score(mode, value)")
 			self.db_cursor.execute("CREATE TABLE settings(setting_name, value)")
 			self.db_cursor.execute("INSERT INTO settings VALUES (\"resolution\", \"1600x900\")")
+			self.db_cursor.execute("INSERT INTO settings VALUES (\"grid\", 1)")
 			self.db.commit()
 
 	def insert_game_score(self, game_mode, score):
