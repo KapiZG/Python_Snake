@@ -79,7 +79,7 @@ class Snake_widget_manager:
 			events = pygame.event.poll()
 			if events.type == pygame.MOUSEBUTTONUP:
 				if adventure_mode.is_mouse_on_button():
-					pass
+					self.run_snake(Base_game_modes.Adventure_mode(self.current_screen, self.game_size))
 				elif bare_bone_mode.is_mouse_on_button():
 					self.run_snake(Base_game_modes.Bare_bone_mode_game(self.current_screen, self.game_size))
 				elif bomb_mode.is_mouse_on_button():
