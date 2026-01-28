@@ -2,6 +2,7 @@ import Snake
 import pygame
 from Button_default import Button_default
 from Button_default import Input_text
+from Button_default import Check_box
 import sys
 from Snake_database_handler import Snake_database_handler
 import Base_game_modes
@@ -50,15 +51,15 @@ class Snake_widget_manager:
 
 		adventure_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1),  text_select_game_mode.get_abs_offset()[1] + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Adventure Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 		bare_bone_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), adventure_mode.button_position[1] + Data.minimum_top_margin), "Bare Bone Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
-		bomb_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bare_bone_mode.button_position[1] + Data.minimum_top_margin), "Bomb Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
-		vs_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bomb_mode.button_position[1] + Data.minimum_top_margin), "Versus Ai Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		bomb_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), adventure_mode.button_position[1] + Data.minimum_top_margin), "Bomb Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		# vs_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 0.1), bomb_mode.button_position[1] + Data.minimum_top_margin), "Versus Ai Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 
 		black_out_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5),  text_select_game_mode.get_abs_offset()[1] + Data.minimum_top_margin + int(0.1 * Data.window_resolution[1])), "Black Out Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
-		button_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), adventure_mode.button_position[1] + Data.minimum_top_margin), "Buttons Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
-		not_definded = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), bare_bone_mode.button_position[1] + Data.minimum_top_margin), "None", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
-		multiplayer_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), bomb_mode.button_position[1] + Data.minimum_top_margin), "Multiplayer", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		# button_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), adventure_mode.button_position[1] + Data.minimum_top_margin), "Buttons Mode", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		# not_definded = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), bare_bone_mode.button_position[1] + Data.minimum_top_margin), "None", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
+		# multiplayer_mode = Button_default(self.current_screen, (int(Button_default.center_div() * 1.5), bomb_mode.button_position[1] + Data.minimum_top_margin), "Multiplayer", button_width=int(Button_default.DEFAULT_BUTTON_WIDTH * 0.75))
 
-		buttons = [adventure_mode, bare_bone_mode, bomb_mode, vs_mode, black_out_mode, button_mode, not_definded, multiplayer_mode]
+		buttons = [adventure_mode, bare_bone_mode, bomb_mode, black_out_mode]
 		for button in buttons:
 			if self.database.is_score_exist(button.get_Text()):
 				score_value = str(self.database.get_best_game_score(button.get_Text()))
@@ -67,7 +68,7 @@ class Snake_widget_manager:
 			score_text = Data.generate_text(str("Best Score: " + score_value), font_size=int(Data.text_size * 0.75))
 			self.current_screen.blit(score_text, (button.button_position[0] + button.button_width + Data.select_score_left_margin, button.button_position[1]))
 		
-		return_button = Button_default(self.current_screen, (Button_default.center_div(), vs_mode.button_position[1] + Data.minimum_top_margin), "Return")
+		return_button = Button_default(self.current_screen, (Button_default.center_div(), int(Data.window_resolution[1] * 0.85)), "Return")
 		buttons.append(return_button)
 
 		pygame.display.flip()
@@ -86,8 +87,8 @@ class Snake_widget_manager:
 					self.run_snake(Base_game_modes.Bomb_mode_game(self.current_screen, self.game_size))
 				elif return_button.is_mouse_on_button():
 					self.main_menu()
-				elif vs_mode.is_mouse_on_button():
-					self.run_snake(Base_game_modes.Versus_ai_mode(self.current_screen, self.game_size))
+				# elif vs_mode.is_mouse_on_button():
+				# 	self.run_snake(Base_game_modes.Versus_ai_mode(self.current_screen, self.game_size))
 				elif black_out_mode.is_mouse_on_button():
 					self.run_snake(Base_game_modes.Black_out_mode(self.current_screen, self.game_size))
 			pygame.display.flip()
@@ -101,22 +102,27 @@ class Snake_widget_manager:
 		self.death_screen(snake.score, game)
 
 	def settings(self):
-		self.current_screen.fill((255,0,0))
-		go_back_button = Button_default(self.current_screen, (400, 500), "Back")
+		self.current_screen.fill((41,189,193))
 
-		input_text = Input_text(self.current_screen, (200, 200))
-		accept_button = Button_default(self.current_screen, (600, 200), "Accept tekst")
+		text_input_text = Data.generate_text("Text input tester", color=(0,0,0))
+		input_text = Input_text(self.current_screen, (int(Data.window_resolution[0] * 0.03), int(Data.window_resolution[1] * 0.15)))
+		accept_button = Button_default(self.current_screen, (input_text.button_width + int(Data.window_resolution[0] * 0.02) + input_text.button_position[0] , int(Data.window_resolution[1] * 0.15)), "Accept tekst")
 		text = Data.generate_text("")
-		resolution1 = Button_default(self.current_screen, (100, 800), "1600x900")
-		resolution2 = Button_default(self.current_screen, (600, 800), "1920x1080")
-		resolution3 = Button_default(self.current_screen, (1000, 800), "2560x1440")
-		gridButton = Button_default(self.current_screen, (300, 650), "grid")
+
+		gridButton = Check_box(self.current_screen, (int(Data.window_resolution[0] * 0.125), int(Data.window_resolution[1] * 0.45) ), Data.show_grid, "grid")
+
+		resolution_text = Data.generate_text("Resolution:", color=(0,0,0))
+		resolution1 = Button_default(self.current_screen, (int(Data.window_resolution[0] * 0.03), int(Data.window_resolution[1] * 0.70)), "1600x900")
+		resolution2 = Button_default(self.current_screen, (resolution1.button_position[0] + resolution1.button_width + int(Data.window_resolution[0] * 0.02), int(Data.window_resolution[1] * 0.70)), "1920x1080")
+		resolution3 = Button_default(self.current_screen, (resolution2.button_position[0] + resolution2.button_width + int(Data.window_resolution[0] * 0.02), int(Data.window_resolution[1] * 0.70)), "2560x1440")
+
+		go_back_button = Button_default(self.current_screen, (int(Button_default.center_div()), int(Data.window_resolution[1] * 0.85)), "Back")
 
 		is_running = True
 		while is_running:
 			self.clock.tick(60)
 			go_back_button.render_button()
-			gridButton.render_button()
+			gridButton.render_check_box()
 			accept_button.render_button()
 			input_text.render_button()
 			resolution1.render_button()
@@ -128,18 +134,21 @@ class Snake_widget_manager:
 				if go_back_button.is_mouse_on_button():
 					self.main_menu()
 				elif accept_button.is_mouse_on_button():
-					text = Data.generate_text(input_text.text)
+					text = Data.generate_text(input_text.text, color=(200,0,0))
 				elif resolution1.is_mouse_on_button():
 					self.database.change_settings("resolution", "1600x900")
 				elif resolution2.is_mouse_on_button():
 					self.database.change_settings("resolution", "1920x1080")
 				elif resolution3.is_mouse_on_button():
 					self.database.change_settings("resolution", "2560x1440")
-				elif gridButton.is_mouse_on_button():
+				elif gridButton.is_mouse_on_check_box():
+					gridButton.on_click()
 					Data.show_grid = not Data.show_grid
 					self.database.change_settings("grid", Data.show_grid)
-					
-			self.current_screen.blit(text, (1200, 200))
+
+			self.current_screen.blit(text_input_text, (int(Data.window_resolution[0] * 0.03), int(Data.window_resolution[1] * 0.05)))	
+			self.current_screen.blit(text, (int(Data.window_resolution[0] * 0.03), int(Data.window_resolution[1] * 0.30)))
+			self.current_screen.blit(resolution_text, (int(Data.window_resolution[0] * 0.03), int(Data.window_resolution[1] * 0.60)))
 			input_text.get_user_input(user_input)
 			pygame.display.flip()
 

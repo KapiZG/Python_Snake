@@ -97,3 +97,40 @@ class Input_text:
                 self.text = self.text[:-2] + "|"
             else:
                 self.text = self.text[:-1] + pygame.key.name(input.key) + "|"
+
+class Check_box:
+    def __init__(self, screen, position, checked = False, text = ""):
+        self.screen = screen
+        self.text = str(text)
+        self.position = position
+        self.checked = checked
+        self.set_color()
+        self.size = int(Data.window_resolution[0] * 0.05)
+        self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.size))
+        self.text_position = (self.position[0] - self.font.size(self.text)[0], self.position[1])
+    
+    def is_mouse_on_check_box(self):
+        mouse_x = pygame.mouse.get_pos()[0]
+        mouse_y = pygame.mouse.get_pos()[1]
+        if mouse_x >= self.position[0] and mouse_x <= self.position[0] + self.size  and mouse_y >= self.position[1] and mouse_y <= self.position[1] + self.size:
+            return True
+        else:
+            return False
+
+    def on_click(self):
+        if self.is_mouse_on_check_box():
+            self.checked = not self.checked
+            self.set_color()
+    
+    def set_color(self):
+        self.color = (0,200,0) if self.checked else (255,255,255)
+
+    def render_check_box(self):
+        if self.is_mouse_on_check_box():
+            pygame.draw.rect(self.screen, tuple(int(color/2) for color in self.color), [self.position[0], self.position[1], self.size, self.size])
+        elif self.checked:
+            pygame.draw.rect(self.screen, self.color, [self.position[0], self.position[1], self.size, self.size])
+        else:
+            pygame.draw.rect(self.screen, self.color, [self.position[0], self.position[1], self.size, self.size])
+
+        self.screen.blit(self.font.render(self.text, True, (0,0,0)), self.text_position)
